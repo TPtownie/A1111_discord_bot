@@ -29,6 +29,7 @@ A feature-rich Discord bot for generating AI images using Automatic1111's Stable
 1. **Clone the repository**:
 ```bash
 git clone https://github.com/TPtownie/A1111_discord_bot
+cd A1111_discord_bot
 ```
 
 2. **Install Python dependencies**:
@@ -137,6 +138,14 @@ When using `/dream` or `/redream`, you can customize:
 3. Clear all: `/lora-clear`
 
 LoRAs are automatically included in your generations once added.
+
+### Preset Generation
+
+The `/catnap` command provides quick generation with predefined style presets. To customize or add new presets, edit the `catnap_command` function in `dream.py` and modify the preset options and their associated settings.
+
+### Advanced Generation
+
+- `/regional` - Allows complex multi-region prompting with different layouts (vertical, horizontal, columns, quadrants). Requires Regional Prompter extension in A1111.
 
 ## Configuration Files
 

@@ -19,41 +19,6 @@ def scale_to_size(width: int, height: int, size: int) -> Tuple[int, int]:
     scale = (size / (width * height)) ** 0.5
     return int(width * scale), int(height * scale)
 
-
-class ImageActionView(discord.ui.View):
-    """Action buttons for generated images to trigger Wan2GP bot functions"""
-    
-    def __init__(self, prompt: str, checkpoint: str, timeout: float = 300):
-        super().__init__(timeout=timeout)
-        self.prompt = prompt
-        self.checkpoint = checkpoint
-    
-    @discord.ui.button(label="🎬 Animate", style=discord.ButtonStyle.primary, custom_id="wan2gp_animate")
-    async def animate_button(self, interaction: discord.Interaction, button: discord.ui.Button):
-        # Store context in custom_id for Wan2GP bot to handle
-        await interaction.response.send_message(
-            f"🎬 **Animation Request Sent**\n"
-            f"The Wan2GP bot will handle this animation request.\n"
-            f"Original prompt: *{self.prompt[:100]}...*", 
-            ephemeral=True
-        )
-    
-    @discord.ui.button(label="🗣️ Make Speak", style=discord.ButtonStyle.secondary, custom_id="wan2gp_speak")
-    async def speak_button(self, interaction: discord.Interaction, button: discord.ui.Button):
-        # Store context for Wan2GP bot to handle  
-        await interaction.response.send_message(
-            f"🗣️ **Speech Request Sent**\n"
-            f"The Wan2GP bot will handle this talking head request.\n"
-            f"You'll be prompted to enter text to speak.", 
-            ephemeral=True
-        )
-    
-    async def on_timeout(self):
-        # Disable buttons after timeout
-        for item in self.children:
-            item.disabled = True
-
-
 class DreamCog(commands.Cog):
     def __init__(self, bot: discord.Client):
         self.bot = bot
@@ -173,7 +138,7 @@ class DreamCog(commands.Cog):
         payload = {
             "prompt": f"masterpiece, best quality, {prompt} {lora_prompt}",
             "negative_prompt": "(worst quality, low quality:2), interlocked fingers, badly drawn hands and fingers, anatomically incorrect hands,",
-            "sampler_name": "DPM++ 2M Karras",
+            "sampler_name": "Euler a",
             "steps": 26,
             "cfg_scale": 6.5,
             "denoising_strength": 0.40,
@@ -245,7 +210,7 @@ class DreamCog(commands.Cog):
         payload = {
             "prompt": f"masterpiece, best quality, {prompt}",
             "negative_prompt": "(worst quality, low quality:2), interlocked fingers, badly drawn hands and fingers, anatomically incorrect hands,",
-            "sampler_name": "DPM++ 2M Karras",
+            "sampler_name": "Euler a",
             "steps": 30,
             "cfg_scale": 6.5,
             "width": int(orientation.split("x")[0]),
@@ -271,7 +236,7 @@ class DreamCog(commands.Cog):
     async def catnap_command(
             self,
             interaction: discord.Interaction,
-            preset: Literal["Atomix", "Retro", "Illustrious", "Laura", "Unholy", "NAI Love - Real"],
+            preset: Literal["Style_A", "Style_B", "Style_C", "Style_D", "Style_E", "Style_F"],
             #checkpoint: str,
             orientation: str,
             prompt: str,
@@ -288,62 +253,41 @@ class DreamCog(commands.Cog):
                 content = f"You may use this command again <t:{calendar.timegm(eta.utctimetuple())}:R>."
                 return await interaction.response.send_message(content, ephemeral=True)
    
-        if preset == "Retro":
+        if preset == "Style_A":
             payload = {
-                "prompt": f"masterpiece,best quality, highly detailed, score_9, score_8_up, score_7_up, score_6_up, {prompt}",
+                "prompt": f"score_9, score_8_up, score_7_up, score_6_up, {prompt}",
                 "negative_prompt": "3d, monochrome, simple background,watermark, patreon username, artist name, signature, text",
                 "sampler_name": "Euler A",
-                "steps": 26,
+                "steps": 30,
                 "cfg_scale": 6,
-                "denoising_strength": 0.44,
+                "denoising_strength": 0.2,
                 "width": int(orientation.split("x")[0]),
                 "height": int(orientation.split("x")[1]),
                 "override_settings": {
-                    "sd_model_checkpoint": "pottasticpdxl_"
+                    "sd_model_checkpoint": "ponyDiffusionV6XL_v6StartWithThisOne"
                 },
                 "override_settings_restore_afterwards": "True",
                 "enable_hr": "True",
                 "hr_scale": 2,
                 "hr_upscaler": "4x-AnimeSharp",
-                "hr_second_pass_steps": "14",
-                "alwayson_scripts": {
-                    "ADetailer": ADETAILER_ARGS
-                }
-            }
-        elif preset == "realistic":
-            payload = {
-                "prompt": f"score_9, score_8_up, score_7_up, score_6_up, score_5_up, score_4_up, realistic {prompt}",
-                "negative_prompt": "(score_1, score_2, score_3), sketch, worst quality, low quality, deformed, censored, bad anatomy, patreon, logo, ",
-                "sampler_name": "DPM++ 2M SDE SGMUniform",
-                "steps": 20,
-                "cfg_scale": 4,
-                "denoising_strength": 0.15,
-                "width": int(orientation.split("x")[0]),
-                "height": int(orientation.split("x")[1]),
-                "override_settings": {
-                    "sd_model_checkpoint": "2dnPony_v10Play"
-                },
-                "override_settings_restore_afterwards": "True",
-                "enable_hr": "True",
-                "hr_scale": 2,
-                "hr_upscaler": "4xRealWebPhoto_v4_dat2",
                 "hr_second_pass_steps": "10",
                 "alwayson_scripts": {
                     "ADetailer": ADETAILER_ARGS
                 }
             }
-        elif preset == "Unholy":
+
+        elif preset == "Style_B":
             payload = {
                 "prompt": f"masterpiece, best quality, {prompt}",
                 "negative_prompt": f"worst quality, low quality, lowres, jpeg artifacts, bad anatomy, bad hands, watermark, {neg_prompt}",
                 "sampler_name": "Euler a",
                 "batch_size": batch_size,
-                "steps": 28,
+                "steps": 30,
                 "denoising_strength": 0.15,
                 "width": int(orientation.split("x")[0]),
                 "height": int(orientation.split("x")[1]),
                 "override_settings": {
-                    "sd_model_checkpoint": "holyMixIllustriousxl_v1"
+                    "sd_model_checkpoint": "illustriousXL_v01"
                 },
                 "override_settings_restore_afterwards": "True",
                 "enable_hr": "False",
@@ -354,7 +298,7 @@ class DreamCog(commands.Cog):
                     "ADetailer": ADETAILER_ARGS
                 }
             }       
-        elif preset == "Laura":
+        elif preset == "Style_C":
             payload = {
                 "prompt": f"masterpiece, best quality, {prompt}",
                 "negative_prompt": f"worst quality, low quality, bad anatomy, watermark, username, patreon, {neg_prompt}",
@@ -365,7 +309,7 @@ class DreamCog(commands.Cog):
                 "width": int(orientation.split("x")[0]),
                 "height": int(orientation.split("x")[1]),
                 "override_settings": {
-                    "sd_model_checkpoint": "pasanctuarySDXL_v40"
+                    "sd_model_checkpoint": "illustriousXL_v01"
                 },
                 "override_settings_restore_afterwards": "True",
                 "enable_hr": "False",
@@ -376,7 +320,7 @@ class DreamCog(commands.Cog):
                     "ADetailer": ADETAILER_ARGS
                 }
             }
-        elif preset == "Illustrious":
+        elif preset == "Style_D":
             payload = {
                 "prompt": f"masterpiece, best quality, {prompt}",
                 "negative_prompt": f"worst quality, low quality, bad anatomy, watermark, username, patreon, {neg_prompt}",
@@ -387,7 +331,7 @@ class DreamCog(commands.Cog):
                 "width": int(orientation.split("x")[0]),
                 "height": int(orientation.split("x")[1]),
                 "override_settings": {
-                    "sd_model_checkpoint": "pasanctuarySDXL_v40"
+                    "sd_model_checkpoint": "illustriousXL_v01"
                 },
                 "override_settings_restore_afterwards": "True",
                 "enable_hr": "True",
@@ -398,7 +342,7 @@ class DreamCog(commands.Cog):
                     "ADetailer": ADETAILER_ARGS
                 }
             }
-        elif preset == "Atomix":
+        elif preset == "Style_E":
             payload = {
                 "prompt": f"score_8, score_6_up, 8k RAW photo, film grain, realistic, {prompt}",
                 "negative_prompt": "(worst quality, low quality:1.4), (deformed, distorted, disfigured:1.3), poorly drawn, bad anatomy, wrong anatomy, extra limb, missing limb, floating limbs, (mutated hands and fingers:1.4), patreon, logo,",
@@ -409,7 +353,7 @@ class DreamCog(commands.Cog):
                 "width": int(orientation.split("x")[0]),
                 "height": int(orientation.split("x")[1]),
                 "override_settings": {
-                    "sd_model_checkpoint": "atomixPonyRealismXL_v10"
+                    "sd_model_checkpoint": "ponyDiffusionV6XL_v6StartWithThisOne"
                 },
                 "override_settings_restore_afterwards": "True",
                 "enable_hr": "False",
@@ -420,31 +364,8 @@ class DreamCog(commands.Cog):
                     "ADetailer": ADETAILER_ARGS
                 }
             }
-        elif preset == "PDXL":
-            payload = {
-                "prompt": f"{prompt}",
-                "negative_prompt": "greyscale,simple background,3d,blurry,monochrome,text,watermark,nose,patreon",
-                "sampler_name": "Euler a",
-                "batch_size": batch_size,
-                "steps": 26,
-                "cfg_scale": 5.5,
-                "denoising_strength": 0.44,
-                "width": int(orientation.split("x")[0]),
-                "height": int(orientation.split("x")[1]),
-                "override_settings": {
-                "sd_model_checkpoint": checkpoint,
-                "sd_vae": "sdxl_vae.safetensors",
-                },
-                "override_settings_restore_afterwards": True,  # Removed quotes from True
-                "enable_hr": False,  # Removed quotes from True
-                "hr_scale": 1.5,
-                "hr_upscaler": "4x-AnimeSharp",
-                "hr_second_pass_steps": 12,  # Removed quotes from number
-                "alwayson_scripts": {
-                    "ADetailer": ADETAILER_ARGS
-                }
-            }
-        elif preset == "NAI Love - Real":
+
+        elif preset == "Style_F":
             payload = {
                 "prompt": f"masterpiece, best quality, {prompt}",
                 "negative_prompt": f"worst quality, low quality, {neg_prompt}",
@@ -456,7 +377,7 @@ class DreamCog(commands.Cog):
                 "width": int(orientation.split("x")[0]),
                 "height": int(orientation.split("x")[1]),
                 "override_settings": {
-                    "sd_model_checkpoint": "nailoveNoobaiRealSDXL_v03Contrastes",
+                    "sd_model_checkpoint": "illustriousXL_v01",
                     "sd_vae": "sdxl_vae.safetensors",
                     "CLIP_stop_at_last_layers": 2
                 },
@@ -543,7 +464,7 @@ class DreamCog(commands.Cog):
             "width": int(orientation.split("x")[0]),
             "height": int(orientation.split("x")[1]),
             "override_settings": {
-                "sd_model_checkpoint": "holyMixIllustriousxl_v1",
+                "sd_model_checkpoint": "illustriousXL_v01",
                 "sd_vae": "sdxl_vae.safetensors",
             },
             "override_settings_restore_afterwards": True,
