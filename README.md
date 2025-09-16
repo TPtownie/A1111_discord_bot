@@ -28,7 +28,7 @@ A feature-rich Discord bot for generating AI images using Automatic1111's Stable
 
 1. **Clone the repository**:
 ```bash
-git clone [<repository-url>](https://github.com/TPtownie/A1111_discord_bot)
+git clone https://github.com/TPtownie/A1111_discord_bot
 ```
 
 2. **Install Python dependencies**:
@@ -207,3 +207,4 @@ This project is provided as-is for educational purposes.
 - Discord.py community for the excellent library
 
 - All model creators and the SD community
+
