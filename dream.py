@@ -474,56 +474,6 @@ class DreamCog(commands.Cog):
         self.queue_add(interaction, payload)
         await interaction.response.send_message(content=content)
 
-    @app_commands.command(name="ephemeral", description="Next level dreams...")
-    @app_commands.choices(orientation=PDXL_ORIENTATION_CHOICES)
-    async def ephemeral_command(
-            self,
-            interaction: discord.Interaction,
-            orientation: str,
-            common: str,
-            left_side: str,
-            right_side: str,
-            batch_size: Literal["1",]
-    ):
-        # Check cooldown
-        if interaction.user.id not in VIP_USER_IDS:
-            if self.generating.get(interaction.user.id, False):
-                content = "Your current image must finish generating before you can request another one."
-                return await interaction.response.send_message(content, ephemeral=True)
-            if interaction.user.id in self.last_img and (datetime.utcnow() - self.last_img[interaction.user.id]).seconds < IMAGE_COOLDOWN:
-                eta = self.last_img[interaction.user.id] + timedelta(seconds=IMAGE_COOLDOWN)
-                content = f"You may use this command again <t:{calendar.timegm(eta.utctimetuple())}:R>."
-                return await interaction.response.send_message(content, ephemeral=True)
-
-        payload = {
-                "prompt": f"masterpiece, best quality, {common} ADDCOMM {left_side} ADDCOL {right_side}",
-                "negative_prompt": "worst quality, low quality, bad anatomy, watermark, username, patreon,",
-                "sampler_name": "Euler a",
-                "batch_size": batch_size,
-                "steps": 26,
-                "cfg_scale": 6,
-                "denoising_strength": 0.20,
-                "width": int(orientation.split("x")[0]),
-                "height": int(orientation.split("x")[1]),
-                "override_settings": {
-                    "sd_model_checkpoint": "holyMixIllustriousxl_v1",
-                    "sd_vae": "sdxl_vae.safetensors",
-                },
-                "override_settings_restore_afterwards": True,
-                "enable_hr": True,
-                "hr_scale": 1.5,
-                "hr_upscaler": "4x-UltraSharp",
-                "hr_second_pass_steps": 10,
-                "alwayson_scripts": {
-                    "Regional Prompter": REGIONAL_PROMPTER_ARGS,
-                    "ADetailer": ADETAILER_ARGS
-                }
-            }
-  
-        # Add task to the queue
-        content = self.get_loading_message()
-        self.queue_add(interaction, payload)
-        await interaction.response.send_message(content=content)
 
     @app_commands.command(name="regional", description="Advanced regional prompting with multiple layouts")
     @app_commands.choices(orientation=PDXL_ORIENTATION_CHOICES)
@@ -663,7 +613,7 @@ class DreamCog(commands.Cog):
             return []
         return self.lora_manager.get_lora_autocomplete_choices(current)
 
-    @app_commands.command(name="loras", description="View your active LoRAs")
+    @app_commands.command(name="lora-current", description="View your currently active LoRAs")
     async def loras_list_command(self, interaction: discord.Interaction):
         active_loras = self.lora_manager.get_user_session_loras(interaction.user.id)
         

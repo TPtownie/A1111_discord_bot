@@ -111,15 +111,16 @@ You should see "Ready" in the console when the bot is connected.
 ### Basic Commands
 
 - `/dream` - Generate an image from a text prompt
-- `/img2img` - Transform an existing image
-- `/lora_search` - Search for available LoRA models
-- `/lora_add` - Add a LoRA to your generation settings
-- `/lora_list` - View your active LoRAs
-- `/lora_clear` - Remove all LoRAs from your settings
+- `/redream` - Transform an existing image (img2img)
+- `/catnap` - Generate an image with preset options
+- `/regional` - Advanced regional prompting with multiple layouts
+- `/lora` - Add a LoRA to your generation settings
+- `/lora-current` - View your currently active LoRAs
+- `/lora-clear` - Remove all LoRAs from your settings
 
 ### Generation Parameters
 
-When using `/dream` or `/img2img`, you can customize:
+When using `/dream` or `/redream`, you can customize:
 - **Prompt** - Your image description
 - **Negative Prompt** - What to avoid in the image
 - **Model** - Choose between SD1.5, SDXL, Illustrious, or Flux models
@@ -131,10 +132,9 @@ When using `/dream` or `/img2img`, you can customize:
 
 ### LoRA Management
 
-1. Search for LoRAs: `/lora_search query:character`
-2. Add to your settings: `/lora_add filename:mylora.safetensors weight:0.7`
-3. View active LoRAs: `/lora_list`
-4. Clear all: `/lora_clear`
+1. Add LoRAs: `/lora filename:mylora.safetensors weight:0.7`
+2. View active LoRAs: `/lora-current`
+3. Clear all: `/lora-clear`
 
 LoRAs are automatically included in your generations once added.
 
