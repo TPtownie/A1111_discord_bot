@@ -1,0 +1,20 @@
+# Discord Bot Dependencies
+discord.py>=2.3.0
+aiohttp>=3.8.0
+Pillow>=9.0.0
+
+# API Dependencies  
+fastapi>=0.104.0
+uvicorn>=0.24.0
+pydantic>=2.0.0
+python-multipart>=0.0.6
+
+# General Dependencies
+asyncio
+base64
+json
+uuid
+datetime
+typing
+os
+io
